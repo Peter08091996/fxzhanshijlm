@@ -60,6 +60,7 @@ export default function MemeGrid({ uploadInputRef }: MemeGridProps) {
     }
 
     async function handleUploadSubmit(file: File, title: string, category: MemeCategory) {
+        // Error will propagate to UploadModal to be caught and alerted
         const newMeme = await uploadMeme(file, title, category);
         setMemes(prev => [newMeme, ...prev]);
     }
@@ -111,8 +112,8 @@ export default function MemeGrid({ uploadInputRef }: MemeGridProps) {
                             key={tab.key}
                             onClick={() => setSelectedCategory(tab.key)}
                             className={`px-4 py-2 text-sm font-mono font-bold border-2 transition-all ${selectedCategory === tab.key
-                                    ? "bg-black text-white border-black"
-                                    : "bg-white text-black border-zinc-300 hover:border-black"
+                                ? "bg-black text-white border-black"
+                                : "bg-white text-black border-zinc-300 hover:border-black"
                                 }`}
                         >
                             {tab.label}

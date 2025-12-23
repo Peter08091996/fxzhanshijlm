@@ -44,6 +44,9 @@ export function UploadModal({ isOpen, onClose, onSubmit, selectedFile }: UploadM
         try {
             await onSubmit(selectedFile, title.trim(), category as MemeCategory);
             onClose();
+        } catch (error) {
+            console.error("Upload failed in modal:", error);
+            alert(`上传失败: ${error instanceof Error ? error.message : "未知错误"}`);
         } finally {
             setIsSubmitting(false);
         }
