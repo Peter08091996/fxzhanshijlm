@@ -23,14 +23,33 @@ export async function fetchMemes(): Promise<Meme[]> {
 }
 
 export async function uploadMeme(file: File, title: string, category: MemeCategory): Promise<Meme> {
+    // 0. Validation & Compression
+    const MAX_SIZE_MB = 5;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        throw new Error(`File too large (Max ${MAX_SIZE_MB}MB)`);
+    }
+
+    if (!file.type.startsWith('image/')) {
+        throw new Error("Only image files are allowed");
+    }
+
+    // Compress client-side
+    // Dynamic import to avoid SSR issues if this were a server component (though it's called from client)
+    const { compressImage } = await import("@/lib/utils");
+    const compressedFile = await compressImage(file);
+
     // 1. Upload to Storage
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-    const filePath = `${fileName}`;
+    // Use original extension or .jpg if it was converted
+    const fileExt = compressedFile.name.split('.').pop() || 'jpg';
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    const filePath = fileName; // No folders, flat structure for simplicity
 
     const { error: uploadError } = await supabase.storage
         .from('memes')
-        .upload(filePath, file);
+        .upload(filePath, compressedFile, {
+            cacheControl: '3600',
+            upsert: false
+        });
 
     if (uploadError) {
         throw new Error(`Upload failed: ${uploadError.message}`);

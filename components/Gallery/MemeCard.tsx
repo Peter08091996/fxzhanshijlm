@@ -30,11 +30,13 @@ export function MemeCard({ meme, onLike }: MemeCardProps) {
     return (
         <div className="group relative break-inside-avoid mb-4 border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all">
             <div className="relative aspect-auto w-full border-b-4 border-black">
-                <img
+                <Image
                     src={meme.url}
                     alt={meme.title || "FX WARRIOR MEME"}
+                    width={500}
+                    height={500}
                     className="w-full h-auto object-cover"
-                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
             </div>
             <div className="p-3 flex justify-between items-center bg-white">
